@@ -36,6 +36,6 @@ jobs:
         uses: anchore/scan-action@v3 # Reusable action for scanning Docker images with Grype
         with:
           image: "demo-app:local"
-          fail-build: false
+          fail-build: true
           severity-cutoff: "critical"
           only-fixed: true
