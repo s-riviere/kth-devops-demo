@@ -1,9 +1,5 @@
-# === VERSION VULNÉRABLE (Pour faire échouer la CI) ===
-# L'image Debian Buster contient plusieurs CVEs de niveau Critical/High au niveau du système d'exploitation
-
-FROM python:3.9-slim-buster
-# FROM python:3.12-slim-bookworm
-# FROM python:3.12-alpine
+# FROM python:3.9-slim-buster
+FROM python:3.12-slim-bookworm
 
 WORKDIR /app
 

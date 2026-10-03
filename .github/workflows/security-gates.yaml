@@ -1,0 +1,52 @@
+name: Security Quality Gate (Syft & Grype)
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  security-scan:
+    name: Build, SBOM Generation & Vulnerability Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git - Checkout code
+        uses: actions/checkout@v4
+
+      - name: Docker - Build Docker Image
+        run: |
+          docker build -t demo-app:local .
+
+      - name: Syft - Generate SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: demo-app:local
+          format: spdx-json
+          output-file: sbom.spdx.json
+
+      - name: Syft - Upload SBOM Artifact
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sbom-spdx-json
+          path: sbom.spdx.json
+
+      - name: Grype - Scan Image for Vulnerabilities
+        uses: anchore/scan-action@v3
+        env:
+          GRYPE_DB_VALIDATE_AGE: "false"
+        with:
+          image: "demo-app:local"
+          fail-build: true
+          severity-cutoff: "critical"
+          only-fixed: true
+          output-format: sarif
+
+      - name: Grype - Upload Scan Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: grype-scan-results
+          path: results.sarif
