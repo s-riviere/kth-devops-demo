@@ -35,10 +35,9 @@ jobs:
 
       - name: Grype - Scan Image for Vulnerabilities
         uses: anchore/scan-action@v3
-        env:
-          GRYPE_DB_VALIDATE_AGE: "false"
         with:
-          image: "demo-app:local"
+          sbom: "sbom.spdx.json"
+          grype-version: "latest"
           fail-build: true
           severity-cutoff: "critical"
           only-fixed: true
